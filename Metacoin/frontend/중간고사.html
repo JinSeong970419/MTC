@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>쇼핑몰</title>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script language="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
+		<script language="javascript" type="text/javascript" src="mycontract_abi.js"></script>
+	</head>
+	<body>
+		<!-- <div class="container">
+
+			<h1>MetaCoin Frontend</h1>
+
+			<hr>
+
+			<label><h3>AccountInfo</h3></label>
+				<p>Account Index : <input id="Index" type="text"> </p>
+				<button id="Search">Search</button>
+				<p>Account : <input id="Account" type="text"> </p>
+				<p>Balance : <input id="Balance" type="text"></p>
+				<p>Balance inquiry : <input id="Count" type="text"></p>
+				<p>Count : &nbsp <input id="Counts" type="text"></p>
+
+			<hr>
+
+			<label><h3>Transfer</h3></label>
+				<p>To: &nbsp &nbsp &nbsp &nbsp &nbsp <input id="To" type="text"> </p>
+				<p>Amount : &nbsp <input id="Amount" type="text"></p>
+				<button id="Transfer">Transfer</button>
+		 </div> -->
+
+		<style>
+			* { padding:0; margin: 0; }
+			body { padding: 50px; }
+			li { list-style: none; }
+			.list li { position: relative; width:48%; margin: 1%; float: left;}
+			.list a { display: block; border: 1px solid #ccc; text-decoration: none; color:grey;}
+			.list .img { width: 100%; }
+			.list h2 { padding : 5px;}
+			.list p { padding : 0 5px 5px;}
+			.list .mark { overflow: hidden; position: absolute; left: -5px; top: -5px; width:100px; height: 100px; }
+			.list .mark div { width: 100px; background: skyblue; transform: rotate(-45deg) translate(-29px, -5px); text-align: center; font-size: 14px}
+			.list .mark:before { content: ""; position: absolute; left:-6px; top:59px; border-width:5.5px; border-style: solid; border-color: transparent cadetblue transparent transparent; }
+			.list .mark:after { content: ""; position: absolute; left:60px; top:-6px; border-width:5.5px; border-style: solid; border-color: transparent transparent cadetblue transparent; }
+			.list .button {
+			    background-color: #e7e7e7; color: black;
+			    border: none;
+			    color: black;
+			    padding: 15px 32px;
+			    text-align: center;
+			    text-decoration: none;
+			    display: inline-block;
+			    font-size: 16px;
+			    margin: 4px 2px;
+			    cursor: pointer;
+			}
+
+		</style>
+
+			<h1>MetaCoin Frontend</h1>
+
+			<hr>
+
+			<label><h3>AccountInfo</h3></label>
+				<br>
+				<p>내 MetaCoin 인덱스 선택 : <input id="Index" type="text"> </p>
+				<br>
+				<button id="Search" class="button">MetaCoin Select</button>
+				<br><br>
+				<p>주소 : <input id="Account" type="text"> </p>
+				<p>보유 금액: <input id="Balance" type="text"></p>
+				<br>
+			<hr>
+ 
+			<ul class="list">
+			<li>
+				<a href="#a">
+					<img src ="02.jpg" alt="" class="img" >
+					<h2>모니터</h2>
+					<p>10,000원 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+						<button id="SSS" class="button">구입</button> 
+					</p>
+
+				</a>
+				<div class="mark">
+					<div>New</div>
+				</div>
+			</li>
+			</ul>
+
+			<ul class="list">
+			<li>
+				<a href="#a">
+					<img src ="00.jpg" alt="" class="img" >
+					<h2>키보드</h2>
+					<p>3,000원 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+						<button id="SSS" class="button">구입</button>
+					</p>
+				</a>
+				<div class="mark">
+					<div>New</div>
+				</div>
+			</li>
+			</ul>
+
+			<ul class="list">
+			<li>
+				<a href="#a">
+					<img src ="01.jpg" alt="" class="img" >
+					<h2>마우스</h2>
+					<p>1,500원 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+						<button id="SSS" class="button">구입</button>
+					</p>
+				</a>
+				<div class="mark">
+					<div>New</div>
+				</div>
+			</li>
+			</ul>
+
+			<ul class="list">
+			<li>
+				<a href="#a">
+					<img src ="00.jpg" alt="" class="img" >
+					<h2>마우스 패드</h2>
+					<p>1,500원 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+						<button id="SSS" class="button">구입</button>
+					</p>
+				</a>
+				<div class="mark">
+					<div>New</div>
+				</div>
+			</li>
+			</ul>
+
+		<script>
+			var web3;
+			var accountList;
+			var myContract;
+
+			function startApp() {
+				var myContractAddress = "0x8603b0b9cC1B096c27C9b800A1f93084C1394e95";
+				myContract = new web3.eth.Contract(myContractABI, myContractAddress);
+
+				console.log('MyContract : ', myContract);
+				web3.eth.getAccounts(function(error, accounts) {
+					accountList = accounts;
+			});
+
+			/*search Account*/
+			$('#Search').click(function() {
+				var _index = $('#Index').val();
+				$('#Account').val(accountList[_index]);
+				var _account = $('#Account').val();
+				getBalance(_account).then(function(amount) {
+				$("#Balance").val(amount);
+			  });
+			});
+
+
+			$('#SSS').click(function() {  
+				var _from = $('#Account').val();
+				var _amount = $('#pay').val();
+				$("#Balance").val(7000);
+				payCoin(_from, _amount).then(function(amount){
+					$("#Balance").val(amount);
+				});
+				getBalance(_from).then(function(amount) {
+					$("#Balance").val(amount);
+			  	});
+
+			 });
+
+			}
+
+			function sendCoin(sender, receiver, amount) {
+				return myContract.methods.sendCoin(receiver, amount)
+				.send({ from: sender })
+				.on("receipt", function(receipt) {
+					console.log('Success');
+				})
+				.on("error", function(error) {
+					console.log('Fail');
+				});
+			}
+
+			function getBalance(id) {
+				return myContract.methods.getBalance(id).call()
+			}
+
+			function payCoin(receiver, amount) {
+				return myContract.methods.sendCoin(receiver, amount)
+			}
+
+			window.addEventListener('load', async () => {
+				if (typeof window.web3 !== 'undefined')  {
+					web3 = new Web3(web3.currentProvider);
+				} else {
+					web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+					console.log(web3);
+				}
+
+				startApp()
+
+			})
+		</script>
+
+	</body>
+</html>
